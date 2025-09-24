@@ -1,13 +1,15 @@
 <?php
+<?php
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -44,5 +46,20 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Filament access control
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Contoh: hanya user dengan email tertentu yang bisa akses
+        return $this->email === 'team@sewakantor.com';
+
+        // Atau, jika ada field is_admin di tabel users:
+        // return $this->is_admin === true;
+
+        // Untuk development, izinkan semua user:
+        return true;
     }
 }
