@@ -3,18 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CityResource\Pages;
-use App\Filament\Resources\CityResource\RelationManagers;
 use App\Models\City;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
-use Filament\Tables\View\TablesRenderHook;
 
 class CityResource extends Resource
 {
@@ -26,15 +20,14 @@ class CityResource extends Resource
     {
         return $form
             ->schema([
-                
                 Forms\Components\TextInput::make('name')
-                ->helperText('Gunakan nama data dengan tepat.')
-                ->required()
-                ->maxLength(255),
+                    ->helperText('Gunakan nama data dengan tepat.')
+                    ->required()
+                    ->maxLength(255),
 
                 Forms\Components\FileUpload::make('photo')
-                ->image()
-                ->required(),
+                    ->image()
+                    ->required(),
             ]);
     }
 
@@ -42,9 +35,8 @@ class CityResource extends Resource
     {
         return $table
             ->columns([
-                //
                 Tables\Columns\TextColumn::make('name')
-                ->searchable(),
+                    ->searchable(),
 
                 Tables\Columns\ImageColumn::make('photo'),
             ])
@@ -53,10 +45,13 @@ class CityResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn($record) => !$record->is_locked),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn($records) => collect($records)->every(fn($record) => !$record->is_locked)),
                 ]),
             ]);
     }

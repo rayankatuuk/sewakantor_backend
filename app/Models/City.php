@@ -4,29 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
 class City extends Model
 {
-    //
-    use HasFactory,SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'name',
-        'slug',
         'photo',
+        'slug',
+        'is_locked',
     ];
 
-    public function setNameAttribute($value)
+    public function delete()
     {
-        $this->attributes['name'] = $value;
-        $this->attributes['slug'] = Str::slug($value);
-    }
-
-    public function officeSpaces(): HasMany
-    {
-        return $this->hasMany(OfficeSpace::class);
+        if ($this->is_locked) {
+            throw new \Exception('Data ini tidak bisa dihapus.');
+        }
+        return parent::delete();
     }
 }

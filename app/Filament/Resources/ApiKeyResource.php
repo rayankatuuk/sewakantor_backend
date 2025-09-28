@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ApiKeyResource\Pages;
-use App\Filament\Resources\ApiKeyResource\RelationManagers;
 use App\Models\ApiKey;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ApiKeyResource extends Resource
 {
@@ -23,14 +20,13 @@ class ApiKeyResource extends Resource
     {
         return $form
             ->schema([
-                //
                 Forms\Components\TextInput::make('name')
-                ->required()
-                ->maxLength(255),
+                    ->required()
+                    ->maxLength(255),
 
                 Forms\Components\TextInput::make('key')
-                ->required()
-                ->maxLength(255),
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
@@ -38,19 +34,21 @@ class ApiKeyResource extends Resource
     {
         return $table
             ->columns([
-                //
                 Tables\Columns\TextColumn::make('name')
-                ->searchable(),
+                    ->searchable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn($record) => !$record->is_locked),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn($records) => collect($records)->every(fn($record) => !$record->is_locked)),
                 ]),
             ]);
     }

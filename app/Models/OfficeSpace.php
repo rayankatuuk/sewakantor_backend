@@ -12,8 +12,8 @@ use Illuminate\Support\Str;
 class OfficeSpace extends Model
 {
     //
-    use HasFactory,SoftDeletes;
-    
+    use HasFactory, SoftDeletes;
+
     protected $fillable = [
         'name',
         'thumbnail',
@@ -46,5 +46,13 @@ class OfficeSpace extends Model
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);
+    }
+
+    public function delete()
+    {
+        if ($this->is_locked) {
+            throw new \Exception('Data ini tidak bisa dihapus.');
+        }
+        return parent::delete();
     }
 }
