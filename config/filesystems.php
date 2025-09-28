@@ -28,8 +28,7 @@ return [
 
         'public' => [
             'driver' => 'local',
-            // Ubah root ke folder storage di public agar upload langsung ke public_html/storage
-            'root' => public_path('storage'),
+            'root' => base_path('storage'),
             'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
