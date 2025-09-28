@@ -16,6 +16,15 @@ class City extends Model
         'is_locked',
     ];
 
+    protected $casts = [
+        'is_locked' => 'boolean',
+    ];
+
+    public function officeSpaces()
+    {
+        return $this->hasMany(\App\Models\OfficeSpace::class, 'city_id');
+    }
+
     public function delete()
     {
         if ($this->is_locked) {
